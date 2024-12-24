@@ -1,37 +1,25 @@
 # Croisement entre deux droites
-import matplotlib.pyplot as plt
-plt.xlim(-10,20)
-plt.ylim(-10,20)
 
 def projection_orthogonale(x, y, a, b, c):
 
     # Calcul du dénominateur pour éviter une division par zéro
-    denominateur = a**2 + b**2
-    if denominateur == 0:
+    denominateur=a**2+b**2
+    if denominateur==0:
         raise ValueError("Les coefficients a et b ne peuvent pas être tous les deux nuls.")
 
-    x_proj = (b * (b * x - a * y) - a * c) / denominateur
-    y_proj = (a * (a * y - b * x) - b * c) / denominateur
+    x_proj=(b*(b*x-a*y)-a*c)/denominateur
+    y_proj=(a*(a*y-b*x)-b*c)/denominateur
 
     return x_proj, y_proj
 
 # point de coordonnées (x,y) et doite d'équation ax+by+c=0 et dx+ey+f=0
-def croisement(x,y,a,b,c,d,e,f):
-    
-    
+def croisement(x,y,a,b,c,d,e,f): 
+
     x1,y1= projection_orthogonale(x, y, a, b, c)
     x2,y2= projection_orthogonale(x1, y1, d, e, f)
-    
-    plt.plot(x1,y1,"ob")
-    plt.plot(x2,y2,"or")
     
     while abs(x1-x2)>0.01 or abs(y1-y2)>0.01:
         x1,y1= projection_orthogonale(x2, y2, a, b, c)
         x2,y2= projection_orthogonale(x1, y1, d, e, f)
         
-        plt.plot(x1,y1,"ob")
-        plt.plot(x2,y2,"or")
-        
     return x2,y2
-
-plt.show()

@@ -1,0 +1,41 @@
+#programme croisement entre 2 boules avec une intersection
+
+# Librairies
+import numpy as np 
+
+
+def proj_boule(X,X0,r):
+    "On calcul la distance de X à la boule"
+    #Calcul de la distance à la boule
+    Y=X-X0
+    distance = np.linalg.norm(Y)
+    if distance <= r :
+        "X est déja dans la boule, pas besoin de projeter"
+        return X
+    else: 
+        "X n'est pas dans la boule, on projete"
+        proj = X0+r*(Y/(np.linalg.norm(Y)))
+        return(proj)
+    
+# X: point, A=[x,y,z]: coordonées centre de la boule, a=r:rayon boule
+def croisement(X,A,a,B,b):
+    # on vérifie qu'il y a une intersection entre les 2 boules
+    dist=((B[0]-A[0])**2+(B[1]-A[1])**2+(B[2]-A[2])**2)**0.5
+    if dist > a+b:
+        return "il n'y a pas d'intersection"
+    
+    A=np.array(A)
+    B=np.array(B)
+    
+    projA= proj_boule(X,A,a)
+    projB= proj_boule(projA,B,b)
+    
+    compteur=2
+    
+    while abs(projA[0]-projB[0])>0.1 or abs(projA[1]-projB[1])>0.1 or abs(projA[2]-projB[2])>0.1:
+        projA= proj_boule(projB,A,a)
+        projB= proj_boule(projA,B,b)
+        
+        compteur+=2
+        
+    return projB , compteur

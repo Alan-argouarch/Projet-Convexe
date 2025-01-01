@@ -17,7 +17,7 @@ def proj_boule(X,X0,r):
         proj = X0+r*(Y/(np.linalg.norm(Y)))
         return(proj)
     
-# X: point, A=[x,y,z]: coordonées centre de la boule, a=r:rayon boule
+# X=[x,y,z]: point, A=[x,y,z]: coordonées centre de la boule, a=r:rayon boule
 def croisement(X,A,a,B,b):
     # on vérifie qu'il y a une intersection entre les 2 boules
     dist=((B[0]-A[0])**2+(B[1]-A[1])**2+(B[2]-A[2])**2)**0.5
@@ -32,7 +32,7 @@ def croisement(X,A,a,B,b):
     
     compteur=2
     
-    while abs(projA[0]-projB[0])>0.1 or abs(projA[1]-projB[1])>0.1 or abs(projA[2]-projB[2])>0.1:
+    while abs(projA[0]-projB[0])>0.01 or abs(projA[1]-projB[1])>0.01 or abs(projA[2]-projB[2])>0.01:
         projA= proj_boule(projB,A,a)
         projB= proj_boule(projA,B,b)
         

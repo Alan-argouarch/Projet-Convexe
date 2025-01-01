@@ -13,9 +13,10 @@ def proj_hyperplan(X, A):
     """
     # Extraire la partie normale de A
     n =np.array(A[:-1])
+    h=A[-1]
     # Soit F 
     # Calcul de la projection
-    proj = X - (np.dot(X, n)/(np.linalg.norm(n)**2))*n
+    proj = X - ((np.dot(X, n)-h)/(np.dot(n,n)))*n
     return proj
 
 

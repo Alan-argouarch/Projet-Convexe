@@ -1,0 +1,75 @@
+#4.2. Application question 2
+
+import numpy as np
+
+# Définition de l'inéquation
+
+A = np.array([-6, 5, 0, -7, 9, -5, 12])  # x + y + z + t + u + v <= -4
+X= np.array([-2, 0, 0, 0, 0, 0])
+
+X_proj=proj_demi_espace(X, A)
+print (X_proj)
+
+def norme_euclidienne(X):
+    return np.linalg.norm(X)
+
+# Réduction de la norme euclidienne
+X_min_norm = proj_boule(X_proj, np.array([0, 0, 0, 0, 0, 0]), norme_euclidienne(X_proj))
+print("Vecteur de norme minimale dans l'intersection :", X_min_norm)
+print("Norme minimale :", norme_euclidienne(X_min_norm))
+
+
+
+
+
+
+
+#4.4. Application question 4
+
+import numpy as np
+
+def minimiser_energie_par_gradient():
+    """
+    Minimisation de l'énergie E(h, v) = gh + 0.5*v^2 avec la contrainte v*sqrt(2h) = 10
+    en utilisant la descente de gradient
+    """
+    g = 10
+    xf = 10  #abscisse finale après lancé
+
+    # Fonction énergie dépendant uniquement de h car on remplace v par son expression et xf=10
+    def energie(h):
+        return g*h+25/h
+
+    # Dérivée de l'énergie par rapport à h
+    def derivee_energie(h):
+        return g-(25)/(h**2)
+
+    # Initialisation
+    h = 1.0  # Choix initial (doit être > 0)
+    tol = 1e-8  # Tolérance pour convergence
+    max_iter = 1000
+    learning_rate = 0.01  # Pas de la descente de gradient
+    iteration = 0
+
+    # Descente de gradient
+    while iteration < max_iter:
+        grad = derivee_energie(h)
+        if abs(grad) < tol:  # Critère de convergence
+            break
+        h = h - learning_rate * grad  # Mise à jour de h
+        iteration += 1
+
+    # Calcul de v à partir de h optimal
+    v = xf / np.sqrt(2 * h)
+
+    # Calcul de l'énergie minimale
+    energie_min = energie(h)
+
+    return h, v, energie_min, iteration
+
+# Résolution
+h, v, energie_min, iteration = minimiser_energie_par_gradient()
+print(f"Hauteur optimale (h) : {h:.6f}")
+print(f"Vitesse optimale (v) : {v:.6f}")
+print(f"Énergie minimale : {energie_min:.6f}")
+print(f"Nombre d'itérations : {iteration}")

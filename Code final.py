@@ -634,9 +634,138 @@ print("Le produit scalaire entre X-Pc et la première direction du plan tangent 
 print("le produit scalaire entre X-Pc et la deuxième direction du plan tangent est : ", Produit_scalaire2)
 
 ##################          3.	Intersection de convexe	 ##################################################
-########    3.1 	Illustration de la méthode pour déterminer l’intersection.	
-########    3.2 	Programmation de la méthode.	
-########    3.3 	Vitesse de convergence de cette méthode.	
-########    3.4  	En dimension 2 et 3.	
+# Croisement entre deux droites
+import numpy as np
+import matplotlib.pyplot as plt
+
+def projection_orthogonale(x, y, a, b, c):
+
+    # pour effectuer la projection orthogonale on effectue le produit scalaire
+    # entre le vecteur (1,-a/b) et le vecteur (x_proj-x,y_proj-y).
+    # On résoud ensuite cette équation.
+    
+    x_proj=(x-a*y/b -a*c/b**2)/(1+a**2/b**2)
+    y_proj=-a/b*x_proj-c/b
+
+    return x_proj, y_proj
+
+# point de coordonnées (x,y) et doite d'équation ax+by+c=0 et dx+ey+f=0
+def croisement(x,y,a,b,c,d,e,f):
+   
+    tracer_droite(a,b,c)
+    tracer_droite(d,e,f)
+    plt.plot(x,y, marker="x",color="red")
+    
+    x1,y1= projection_orthogonale(x, y, a, b, c)
+    x2,y2= projection_orthogonale(x1, y1, d, e, f)
+    compteur=2
+    
+    plt.plot((x,x1),(y,y1))
+    plt.plot((x1,x2),(y1,y2))
+    
+    while abs(x1-x2)>0.01 or abs(y1-y2)>0.01:
+        x1,y1= projection_orthogonale(x2, y2, a, b, c)
+        plt.plot((x2,x1),(y2,y1))
+        x2,y2= projection_orthogonale(x1, y1, d, e, f)
+        plt.plot((x1,x2),(y1,y2))
+        compteur+=2
+ 
+    plt.grid()
+    plt.axhline(0, color='black',linewidth=0.5, linestyle='--')  # Axe horizontal
+    plt.axvline(0, color='black',linewidth=0.5, linestyle='--')  # Axe vertical
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.show()    
+ 
+    return x2,y2 , compteur
+
+def tracer_droite(a,b,c):
+    plt.axis("equal")
+    plt.axis([-3, 6, -5, 4])      # L'intervalle dépend de vers où sera situé l'intersection
+    x = np.linspace(-3, 6, 500)
+    y = -a/b * x - c/b
+    plt.plot(x, y,color="black")
+	
+########    3.4  	En dimension 2 et 3.  
+
+### Projection sur un hyperplan 
+import numpy as np 
+
+def proj_hyperplan(X, A):
+    # Extraire la partie normale de A
+        n =np.array(A[:-1])
+        h=A[-1]
+    # Soit F 
+    # Calcul de la projection
+        proj = X - ((np.dot(X, n)-h)/(np.dot(n,n)))*n
+        return proj
+
+def croisement(X,A,B):
+    
+        projA= proj_hyperplan(X,A)
+        projB= proj_hyperplan(projA,B)
+        compteur=2
+    
+        while abs(projA[0]-projB[0])>0.01 or abs(projA[1]-projB[1])>0.01 or abs(projA[2]-projB[2])>0.01:
+            projA= proj_hyperplan(projB,A)
+            projB= proj_hyperplan(projA,B)
+            compteur+=2
+        
+        return projB , compteur
+
+##### Représentation graphique de la projection sur 2 plans 
+    # Librairies
+import numpy as np 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+
+# X=(x,y,z) pour une représentations en 3 dimensions
+def proj_hyperplan(X, A):
+
+    # Extraire la partie normale de A
+        n =np.array(A[:-1])
+        h=A[-1]
+    # Soit F 
+    # Calcul de la projection
+        proj = X - ((np.dot(X, n)-h)/(np.dot(n,n)))*n
+        return proj
+
+def croisement(T,A,B):
+     
+     plt.scatter(T[0],T[1],T[2], color='red')
+     Z= -A[0]/A[2]*X -A[1]/A[2]*Y -A[3]/A[2]
+     plt.plot_surface(X, Y,Z, alpha=0.5, color='red', label='Plan Z=X+Y')
+    
+     Z= -B[0]/B[2]*X -B[1]/B[2]*Y -B[3]/B[2]
+     plt.plot_surface(X, Y,Z, alpha=0.5, color='green', label='Plan Z=X+Y')
+     
+     projA= proj_hyperplan(T,A)
+     plt.plot((T[0],projA[0]), (T[1],projA[1]), (T[2],projA[2]), color='blue', linewidth=2, label='Ligne 3D')
+     projB= proj_hyperplan(projA,B)
+     plt.plot((projA[0],projB[0]), (projA[1],projB[1]), (projA[2],projB[2]), color='blue', linewidth=2, label='Ligne 3D')
+     compteur=2
+    
+     while abs(projA[0]-projB[0])>0.01 or abs(projA[1]-projB[1])>0.01 or abs(projA[2]-projB[2])>0.01:
+         projA= proj_hyperplan(projB,A)
+         plt.plot((projB[0],projA[0]), (projB[1],projA[1]), (projB[2],projA[2]), color='blue', linewidth=2, label='Ligne 3D')
+         projB= proj_hyperplan(projA,B)
+         plt.plot((projA[0],projB[0]), (projA[1],projB[1]), (projA[2],projB[2]), color='blue', linewidth=2, label='Ligne 3D')
+
+         compteur+=2
+     return projB , compteur
+
+fig = plt.figure() 
+plt = fig.add_subplot(111, projection='3d')
+
+     # Définition de l'espace 3D
+x = np.linspace(-5, 5, 100)
+y = np.linspace(-5, 5, 100)
+X, Y = np.meshgrid(x, y)
+
+print(croisement((-4,-1,-2),(-4,1,1,1),(4,-6,8,2)))
+
+### Intersection de 2 boules
+
+
 ##################          4.	Applications #####################################	
 

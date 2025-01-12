@@ -801,8 +801,72 @@ def croisement(X,A,a,B,b):
     return projB , compteur
 
 ### Intersection 2 boules, représentation graphique
+import numpy as np 
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
+def proj_boule(X,X0,r):
+    "On calcul la distance de X à la boule"
+    #Calcul de la distance à la boule
+    X=np.array(X)
+    X0=np.array(X0)
+    
+    Y=X-X0
+    distance = np.linalg.norm(Y)
+    if distance <= r :
+        "X est déja dans la boule, pas besoin de projeter"
+        return X
+    else: 
+        "X n'est pas dans la boule, on projete"
+        proj = X0+r*(Y/(np.linalg.norm(Y)))
+        return(proj)
+    
+# X=[x,y,z]: point, A=[x,y,z]: coordonnées centre de la boule, a=r:rayon boule
+def croisement(X,A,a,B,b):
+    plt.scatter(X[0],X[1],X[2], color='red')
+    A=np.array(A)
+    B=np.array(B)
+    u = np.linspace(0, 2 * np.pi, 100)
+    v = np.linspace(0, np.pi, 100)
+    AX_sphere = A[0] + a * np.outer(np.cos(u), np.sin(v))
+    AY_sphere = A[1] + a * np.outer(np.sin(u), np.sin(v))
+    AZ_sphere = A[2] + a * np.outer(np.ones(np.size(u)), np.cos(v))
+    plt.plot_surface(AX_sphere, AY_sphere, AZ_sphere, color='b', alpha=0.3)
+    BX_sphere = B[0] + b * np.outer(np.cos(u), np.sin(v))
+    BY_sphere = B[1] + b * np.outer(np.sin(u), np.sin(v))
+    BZ_sphere = B[2] + b * np.outer(np.ones(np.size(u)), np.cos(v))
+    plt.plot_surface(BX_sphere, BY_sphere, BZ_sphere, color='g', alpha=0.3)
+     
+   # on vérifie qu'il y a une intersection entre les 2 boules
+    dist = np.linalg.norm(B-A)
+    if dist > a+b:
+        return "il n'y a pas d'intersection"
+    
+    
+    projA= proj_boule(X,A,a)
+    plt.plot((X[0],projA[0]), (X[1],projA[1]), (X[2],projA[2]), color='red', linewidth=2, label='Ligne 3D')
+    projB= proj_boule(projA,B,b)
+    plt.plot((projA[0],projB[0]), (projA[1],projB[1]), (projA[2],projB[2]), color='red', linewidth=2, label='Ligne 3D')
+    compteur=2
+    
+    while abs(projA[0]-projB[0])>0.001 or abs(projA[1]-projB[1])>0.001 or abs(projA[2]-projB[2])>0.001:
+        projA= proj_boule(projB,A,a)
+        plt.plot((projB[0],projA[0]), (projB[1],projA[1]), (projB[2],projA[2]), color='red', linewidth=2, label='Ligne 3D')
+        projB= proj_boule(projA,B,b)
+        plt.plot((projA[0],projB[0]), (projA[1],projB[1]), (projA[2],projB[2]), color='red', linewidth=2, label='Ligne 3D')
+        compteur+=2
+        
+    return projB , compteur
 
+fig = plt.figure() 
+plt = fig.add_subplot(111, projection='3d')
 
+     # Définition de l'espace 3D
+x = np.linspace(-5, 5, 100)
+y = np.linspace(-5, 5, 100)
+X, Y = np.meshgrid(x, y)
+
+croisement([5,5,5],[0,0,0],2,[3.9,0,0],2) 
+   
 ##################          4.	Applications #####################################	
 

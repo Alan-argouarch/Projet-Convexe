@@ -876,6 +876,8 @@ for k in range(100):
     X=proj_boule(X,[1,0,-3,2],2)
 print(X)
 
+
+
 #---- problème 2 :  ----
 
 projA =proj_demi_espace([0,0,0,0,0,0], [1,1,1,1,1,1,-4])  
@@ -884,7 +886,6 @@ for k in range (100):
       projC =proj_demi_espace(projB, [-6,5,-7,0,9,-5,12]) 
       projD =proj_demi_espace(projC, [1,0,8,3,5,8,-1]) 
       projA =proj_demi_espace(projD, [1,1,1,1,1,1,-4] ) 
-
 
 print(projA)
 print(projB)
@@ -909,6 +910,8 @@ d=[1,0,8,3,5,8]
 print(p(x,a),p(x,b),p(x,c),p(x,d)) # il faut vérifie que les équations sont inférieures à -4 , -7 , 12 et -1
 print("la norme est :" , p(x,x)**0.5)
 
+
+
 #---- problème 3 :  ----
 for a in np.arange(3.742,3.746,0.00001):   # on réduit l'intervalle au fur et à mesure des essais
     max=a
@@ -921,5 +924,54 @@ for a in np.arange(3.742,3.746,0.00001):   # on réduit l'intervalle au fur et �
         break
 print(max)
 
+
+
 #---- problème 4 :  ----
 
+import numpy as np
+
+def minimiser_energie_par_gradient():
+    """
+    Minimisation de l'énergie E(h, v) = gh + 0.5*v^2 avec la contrainte v*sqrt(2h) = 10
+    en utilisant la descente de gradient
+    """
+    g = 10
+    xf = 10  #abscisse finale après lancé
+
+    # Fonction énergie dépendant uniquement de h car on remplace v par son expression et xf=10
+    def energie(h):
+        return g*h+25/h
+
+    # Dérivée de l'énergie par rapport à h
+    def derivee_energie(h):
+        return g-(25)/(h**2)
+
+    # Initialisation
+    h = 1.0  # Choix initial (doit être > 0)
+    tol = 1e-8  # Tolérance pour convergence
+    max_iter = 1000
+    learning_rate = 0.01  # Pas de la descente de gradient
+    iteration = 0
+
+    # Descente de gradient
+    while iteration < max_iter:
+        grad = derivee_energie(h)
+        if abs(grad) < tol:  # Critère de convergence
+            break
+        h = h - learning_rate * grad  # Mise à jour de h
+        iteration += 1
+
+    # Calcul de v à partir de h optimal
+    v = xf / np.sqrt(2 * h)
+
+    # Calcul de l'énergie minimale
+    energie_min = energie(h)
+
+    return h, v, energie_min, iteration
+
+# Résolution
+h, v, energie_min, iteration = minimiser_energie_par_gradient()
+print(f"Hauteur optimale (h) : {h:.6f}")
+print(f"Vitesse optimale (v) : {v:.6f}")
+print(f"Énergie minimale : {energie_min:.6f}")
+print(f"Nombre d'itérations : {iteration}")

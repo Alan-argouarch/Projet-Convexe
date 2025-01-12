@@ -878,7 +878,37 @@ print(X)
 
 #---- problème 2 :  ----
 
-  
+projA =proj_demi_espace([0,0,0,0,0,0], [1,1,1,1,1,1,-4])  
+for k in range (100):
+      projB =proj_demi_espace(projA, [-2,1,3,-2,1,-1,-7]) 
+      projC =proj_demi_espace(projB, [-6,5,-7,0,9,-5,12]) 
+      projD =proj_demi_espace(projC, [1,0,8,3,5,8,-1]) 
+      projA =proj_demi_espace(projD, [1,1,1,1,1,1,-4] ) 
+
+
+print(projA)
+print(projB)
+print(projC)
+print(projD)
+
+# produit scalaire de 2 listes pour vérifié inéquation
+def p(liste1, liste2):
+    # Vérifier que les listes ont la même longueur
+    if len(liste1) != len(liste2):
+        raise ValueError("Les deux listes doivent avoir la même longueur.")
+    
+    # Calculer le produit scalaire
+    return sum(x * y for x, y in zip(liste1, liste2))
+
+x= projA.tolist()
+a= [1,1,1,1,1,1]
+b=[-2,1,3,-2,1,-1]
+c=[-6,5,-7,0,9,-5]
+d=[1,0,8,3,5,8]
+
+print(p(x,a),p(x,b),p(x,c),p(x,d)) # il faut vérifie que les équations sont inférieures à -4 , -7 , 12 et -1
+print("la norme est :" , p(x,x)**0.5)
+
 #---- problème 3 :  ----
 for a in np.arange(3.742,3.746,0.00001):   # on réduit l'intervalle au fur et à mesure des essais
     max=a
@@ -890,3 +920,6 @@ for a in np.arange(3.742,3.746,0.00001):   # on réduit l'intervalle au fur et �
         print(X,Y)
         break
 print(max)
+
+#---- problème 4 :  ----
+

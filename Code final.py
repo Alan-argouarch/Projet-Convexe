@@ -926,52 +926,58 @@ print(max)
 
 
 
-#---- problème 4 :  ----
+#---- problème 4 :  ---
 
-import numpy as np
+def distance_demi_hyperbole(t):
+    h = t
+    v = 10 / np.sqrt(2 * h)
+    X = np.array([10, 0])  
+    P = np.array([h, v])  
+    return np.sum((X - P)**2)
 
-def minimiser_energie_par_gradient():
+
+def point_demi_hyperbole(t):
+    h = t
+    v = 10 / np.sqrt(2 * h)
+    return np.array([h, v])
+
+
+def tangente_demi_hyperbole(t):
+    h = t
+    # Dérivée de v = 10 / sqrt(2h)
+    dv_dh = -10 / (2 * (2 * h)**(3/2))
+    return np.array([1, dv_dh]) / np.linalg.norm([1, dv_dh])  # On normalise
+
+def minimiser_energie():
     """
-    Minimisation de l'énergie E(h, v) = gh + 0.5*v^2 avec la contrainte v*sqrt(2h) = 10
-    en utilisant la descente de gradient
+    Projette le point X=(10, 0) sur la demi-hyperbole définie par v*sqrt(2h) = 10
     """
-    g = 10
-    xf = 10  #abscisse finale après lancé
-
-    # Fonction énergie dépendant uniquement de h car on remplace v par son expression et xf=10
-    def energie(h):
-        return g*h+25/h
-
-    # Dérivée de l'énergie par rapport à h
-    def derivee_energie(h):
-        return g-(25)/(h**2)
-
     # Initialisation
-    h = 1.0  # Choix initial (doit être > 0)
-    tol = 1e-8  # Tolérance pour convergence
-    max_iter = 1000
-    learning_rate = 0.01  # Pas de la descente de gradient
-    iteration = 0
+    X = np.array([10, 0])
+    t = 1.0
+    max_iterations = 10000
+    tolerance = 1e-8
+    h = t
 
-    # Descente de gradient
-    while iteration < max_iter:
-        grad = derivee_energie(h)
-        if abs(grad) < tol:  # Critère de convergence
+    for iteration in range(max_iterations): 
+        P = point_demi_hyperbole(h) 
+        vecteur_proj = X - P   
+        vecteur_tangent = tangente_demi_hyperbole(h)  
+        produit_scalaire = np.dot(vecteur_proj, vecteur_tangent)
+        if abs(produit_scalaire) < tolerance: # On arrête si vecteur_proj est orthogonal au vecteur tangent
             break
-        h = h - learning_rate * grad  # Mise à jour de h
-        iteration += 1
-
-    # Calcul de v à partir de h optimal
-    v = xf / np.sqrt(2 * h)
-
-    # Calcul de l'énergie minimale
-    energie_min = energie(h)
-
+        h = h + 0.01 * produit_scalaire
+    P_opt = point_demi_hyperbole(h)  # Point projeté optimal
+    v = P_opt[1]
+    energie_min = 10 * h + 0.5 * v**2
     return h, v, energie_min, iteration
 
-# Résolution
-h, v, energie_min, iteration = minimiser_energie_par_gradient()
+
+h, v, energie_min, iteration = minimiser_energie()
 print(f"Hauteur optimale (h) : {h:.6f}")
 print(f"Vitesse optimale (v) : {v:.6f}")
 print(f"Énergie minimale : {energie_min:.6f}")
 print(f"Nombre d'itérations : {iteration}")
+
+
+

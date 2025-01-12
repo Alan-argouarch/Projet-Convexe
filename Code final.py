@@ -639,11 +639,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def projection_orthogonale(x, y, a, b, c):
-
     # pour effectuer la projection orthogonale on effectue le produit scalaire
     # entre le vecteur (1,-a/b) et le vecteur (x_proj-x,y_proj-y).
-    # On résoud ensuite cette équation.
-    
+    # On résoud ensuite cette équation. 
     x_proj=(x-a*y/b -a*c/b**2)/(1+a**2/b**2)
     y_proj=-a/b*x_proj-c/b
 
@@ -765,6 +763,45 @@ X, Y = np.meshgrid(x, y)
 print(croisement((-4,-1,-2),(-4,1,1,1),(4,-6,8,2)))
 
 ### Intersection de 2 boules
+import numpy as np 
+
+def proj_boule(X,X0,r):
+    "On calcul la distance de X à la boule"
+    #Calcul de la distance à la boule
+    X=np.array(X)
+    X0=np.array(X0)
+    Y=X-X0
+    distance = np.linalg.norm(Y)
+    if distance <= r :
+        "X est déja dans la boule, pas besoin de projeter"
+        return X
+    else: 
+        "X n'est pas dans la boule, on projete"
+        proj = X0+r*(Y/(np.linalg.norm(Y)))
+        return(proj)
+    
+# X=[x,y,z]: point, A=[x,y,z]: coordonnées centre de la boule, a=r:rayon boule
+def croisement(X,A,a,B,b):
+    A=np.array(A)
+    B=np.array(B) 
+   # on vérifie qu'il y a une intersection entre les 2 boules
+    dist = np.linalg.norm(B-A)
+    if dist > a+b:
+        return "il n'y a pas d'intersection"
+        
+    projA= proj_boule(X,A,a)
+    projB= proj_boule(projA,B,b)
+    compteur=2
+    
+    while abs(projA[0]-projB[0])>0.001 or abs(projA[1]-projB[1])>0.001 or abs(projA[2]-projB[2])>0.001:
+        projA= proj_boule(projB,A,a)
+        projB= proj_boule(projA,B,b)    
+        compteur+=2
+        
+    return projB , compteur
+
+### Intersection 2 boules, représentation graphique
+
 
 
 ##################          4.	Applications #####################################	

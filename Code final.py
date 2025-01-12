@@ -869,4 +869,24 @@ X, Y = np.meshgrid(x, y)
 croisement([5,5,5],[0,0,0],2,[3.9,0,0],2) 
    
 ##################          4.	Applications #####################################	
+#---- problème 1 :  ----
+X=proj_boule([1,1,1,1],[1,0,-3,2],2)   
+for k in range(100):
+    X=proj_hyperplan(X,[2,-1,3,1,-3])    
+    X=proj_boule(X,[1,0,-3,2],2)
+print(X)
 
+#---- problème 2 :  ----
+
+  
+#---- problème 3 :  ----
+for a in np.arange(3.742,3.746,0.00001):   # on réduit l'intervalle au fur et à mesure des essais
+    max=a
+    X=proj_boule([2,2,2],[0,0,0],1)   
+    for k in range(1000):   # on augmente la précision de la méthode avec plus d'itérations
+        Y=proj_hyperplan(X,[1,2,3,a])    
+        X=proj_boule(Y,[0,0,0],1)
+    if abs(X[0]-Y[0])>0.0001 or abs(X[1]-Y[1])>0.0001 or abs(X[2]-Y[2])>0.0001: # on augmente la précision en réduisant l'écart entre les 2 projections 
+        print(X,Y)
+        break
+print(max)
